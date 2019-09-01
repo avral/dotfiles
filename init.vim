@@ -1,6 +1,6 @@
 call plug#begin('~/.vim/plugged')
 
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 "
 "" C++ TEST
@@ -25,7 +25,7 @@ Plug 'easymotion/vim-easymotion'
 
 " C++
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'zchee/deoplete-clang'
+"Plug 'zchee/deoplete-clang'
 Plug 'Shougo/neoinclude.vim'
 
 " For airline
@@ -38,19 +38,23 @@ Plug 'mhinz/vim-signify'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 
 " Python
-Plug 'vim-scripts/indentpython.vim'
-Plug 'davidhalter/jedi-vim' " // вырубил так как есть deoplete
-Plug 'zchee/deoplete-jedi'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+"Plug 'vim-scripts/indentpython.vim'
+"Plug 'davidhalter/jedi-vim' " // вырубил так как есть deoplete TODO глючит превью с функциями 
+"Plug 'zchee/deoplete-jedi'
 Plug 'hdima/python-syntax'
-Plug 'KeitaNakamura/highlighter.nvim', { 'do': ':UpdateRemotePlugins' }
+"Plug 'KeitaNakamura/highlighter.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'jiangmiao/auto-pairs'
+
 
 "Plug 'Shougo/deoplete.nvim', { 'tag': '2.0', 'do': ':UpdateRemotePlugins' }
-Plug 'wokalski/autocomplete-flow'
+"Plug 'wokalski/autocomplete-flow'
 " For func argument completion
 "Plug 'Shougo/neosnippet'
 "Plug 'Shougo/neosnippet-snippets'
 
-Plug 'neomake/neomake'
+"Plug 'neomake/neomake'
 "Plug 'Shougo/neocomplete'
 "Plug 'Shougo/neosnippet'
 "Plug 'Shougo/neosnippet-snippets'
@@ -66,14 +70,18 @@ Plug 'slashmili/alchemist.vim'
 Plug 'vim-ruby/vim-ruby'
 
 " JS
+Plug 'dense-analysis/ale'
 Plug 'elzr/vim-json'
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+"Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 Plug 'digitaltoad/vim-pug'
 
-Plug 'posva/vim-vue'
+"Plug 'posva/vim-vue'
+Plug 'storyn26383/vim-vue'
 Plug 'pangloss/vim-javascript'
 Plug 'othree/html5.vim'
 Plug 'othree/javascript-libraries-syntax.vim'
+Plug 'leafgarland/typescript-vim'
+Plug 'jaawerth/neomake-local-eslint-first'
 "Plug 'othree/yajs.vim', { 'tag': '1.6' }
 "Plug 'othree/es.next.syntax.vim'
 
@@ -86,6 +94,16 @@ Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'kelwin/vim-smali'
 
 call plug#end()
+
+
+
+" Coc.nvim
+set statusline^=%{coc#status()}
+let g:airline#extensions#coc#enabled = 1
+nmap <silent> <S-f> <Plug>(coc-definition)
+"nnoremap <S-f> :call CocAction('jumpDefinition', 'tab') <CR>
+
+
 
 "autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 "autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
@@ -172,6 +190,8 @@ let g:jedi#auto_close_doc = 1
 " C++
 " let g:deoplete#sources#clang#libclang_path = '/usr/local/opt/llvm/lib/libclang.dylib'
 " let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/lib/clang'
+" let g:deoplete#sources#clang#clang_header = '/usr/local/bin/eosio-cpp'
+
 "
 let g:deoplete#sources#clang#libclang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
 let g:deoplete#sources#clang#clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
@@ -179,18 +199,24 @@ let g:deoplete#sources#clang#clang_header = '/Library/Developer/CommandLineTools
 "let g:deoplete#sources#clang#libclang_path = '/usr/local/Cellar/llvm/7.0.1/lib/libclang.dylib'
 "let g:deoplete#sources#clang#clang_header = '/usr/local/Cellar/llvm/7.0.1/lib/clang'
 
+
 let g:neomake_cpp_enabled_makers = ['clang']
 "let g:neomake_cpp_enabled_makers = ['clangtidy']
 "let g:neomake_cpp_clang_args = ['-std=c++14', '-Wextra', '-Wall', '-pedantic', '-ferror-limit=0']
+            ""-I /usr/local/Cellar/eosio.cdt/1.6.2/opt/eosio.cdt/include/boost",
+
 let g:neomake_cpp_clang_args = [
-            \ '-std=c++17',
+            \ "-std=c++17",
+            \ "-I/usr/local/Cellar/eosio.cdt/1.6.2/opt/eosio.cdt/include",
             \ '-O3',
             \ '-Wextra',
             \ '-Wall',
             \ '-Iinclude',
+            \ '-fforce-enable-int128',
             \ '-ferror-limit=0',
             \ '-g',
             \ ]
+
 
 "let g:neomake_cpp_clang_args = ['-std=c++1z', '-Iinclude', '-ferror-limit=0']
 
@@ -214,15 +240,15 @@ autocmd FileType vue syntax sync fromstart
 " ESlint
 "let g:neomake_verbose = 3
 let g:neomake_javascript_enabled_makers = ['eslint']
-let g:neomake_javascript_eslint_exe = $PWD .'/node_modules/.bin/eslint'
+"let g:neomake_javascript_eslint_exe = $PWD .'/node_modules/.bin/eslint'
 
 
 "
 "au BufRead,BufNewFile *.vue set ft=html
 "autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css
-autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.css
+"autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.css
 
-autocmd! BufWritePost * Neomake
+"autocmd! BufWritePost * Neomake
 let python_highlight_all = 1
 let g:neomake_python_enabled_makers = ['flake8']
 
@@ -267,24 +293,24 @@ set clipboard+=unnamedplus
 " JS
 " Use deoplete.
 
-let g:deoplete#sources#ternjs#filter = 0
-let g:deoplete#sources#ternjs#types = 1
-let g:deoplete#sources#ternjs#depths = 1
-let g:deoplete#sources#ternjs#timeout = 1
-let g:tern_request_timeout = 1
-let g:tern_show_signature_in_pum = 1  " This do disable full signature type on autocomplete
-
-"Add extra filetypes
-let g:tern#filetypes = [
-                \ 'jsx',
-                \ 'javascript.jsx',
-                \ 'vue',
-                \ ]
+"let g:deoplete#sources#ternjs#filter = 0
+"let g:deoplete#sources#ternjs#types = 1
+"let g:deoplete#sources#ternjs#depths = 1
+"let g:deoplete#sources#ternjs#timeout = 1
+"let g:tern_request_timeout = 1
+"let g:tern_show_signature_in_pum = 1  " This do disable full signature type on autocomplete
+"
+""Add extra filetypes
+"let g:tern#filetypes = [
+"                \ 'jsx',
+"                \ 'javascript.jsx',
+"                \ 'vue',
+"                \ ]
 
 set completeopt=longest,menuone,preview
 
 "Add extra filetypes
-let g:syntastic_html_checkers = ['tidy']
+"let g:syntastic_html_checkers = ['tidy']
 
 set shiftwidth=4
 set tabstop=4
@@ -316,22 +342,24 @@ nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
 
 " Ignor fiels
 let g:NERDTreeWinSize=30
-let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__', 'node_modules', 'npm-debug.log*', 'ghostdriver.log']
+let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__', 'node_modules', 'npm-debug.log*', '\.*.gch.tmp', 'ghostdriver.log']
 set completeopt-=preview
 
 " Поиск по тексту
-let g:ackprg = 'ag —vimgrep'
+"let g:ackprg = 'ag —vimgrep'
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
 
 nnoremap <F3> :set hlsearch!<CR>
-:ino <C-C> <Esc>
+":ino <C-C> <Esc> TODO Remove legasy, so i change Caps Lock to Esc
 
 
 "let g:vue_disable_pre_processors=1
-autocmd FileType vue syntax sync fromstart
+"autocmd FileType vue syntax sync fromstart
 "autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css.less.pug
-autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css
-au BufNewFile,BufRead *.vue setf vue
-let g:used_javascript_libs = 'vue,react'
+"autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css
+"au BufNewFile,BufRead *.vue setf vue
+"let g:used_javascript_libs = 'vue,react'
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
