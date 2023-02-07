@@ -1,94 +1,66 @@
 call plug#begin('~/.vim/plugged')
 
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
-"
-"" C++ TEST
-"Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
-"Plug 'w0rp/ale'
-"Plug 'rhysd/vim-clang-format'
-"Plug 'vim-scripts/a.vim'
-"
-"
 " Themes
 Plug 'mhartington/oceanic-next'
 Plug 'dracula/vim'
 Plug 'joshdick/onedark.vim'
 
+" Syntax check
+Plug 'dense-analysis/ale'
+
+" Coc.nvim
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+"" Other
 Plug 'tomlion/vim-solidity'
+"
+"" Plugins
 
-" Plugins
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
+Plug 'nvim-tree/nvim-tree.lua'
 
-" easy motion
-Plug 'easymotion/vim-easymotion'
-
+Plug 'Xuyuanp/nerdtree-git-plugin'
+"
+"Plug 'easymotion/vim-easymotion'
+Plug 'jiangmiao/auto-pairs'
+"
 " C++
 Plug 'octol/vim-cpp-enhanced-highlight'
-"Plug 'zchee/deoplete-clang'
-Plug 'Shougo/neoinclude.vim'
 
-" For airline
+" Airline
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'mhinz/vim-signify'
 
-Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+" FZF
+Plug 'junegunn/fzf', { 'dir': '~/opt/fzf' }
+Plug 'junegunn/fzf.vim'
 
 " Python
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-"Plug 'vim-scripts/indentpython.vim'
-"Plug 'davidhalter/jedi-vim' " // вырубил так как есть deoplete TODO глючит превью с функциями 
-"Plug 'zchee/deoplete-jedi'
 Plug 'hdima/python-syntax'
-"Plug 'KeitaNakamura/highlighter.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'jiangmiao/auto-pairs'
-
-
-"Plug 'Shougo/deoplete.nvim', { 'tag': '2.0', 'do': ':UpdateRemotePlugins' }
-"Plug 'wokalski/autocomplete-flow'
-" For func argument completion
-"Plug 'Shougo/neosnippet'
-"Plug 'Shougo/neosnippet-snippets'
-
-"Plug 'neomake/neomake'
-"Plug 'Shougo/neocomplete'
-"Plug 'Shougo/neosnippet'
-"Plug 'Shougo/neosnippet-snippets'
 
 " Elixir
 Plug 'elixir-lang/vim-elixir'
 Plug 'slashmili/alchemist.vim'
-"Plug 'thinca/vim-ref'
-"Plug 'awetzel/elixir.nvim', { 'do': 'yes \| ./install.sh' }
-
 
 " Ruby
 Plug 'vim-ruby/vim-ruby'
 
-" JS
-Plug 'dense-analysis/ale'
-Plug 'elzr/vim-json'
-"Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+" HTML
 Plug 'digitaltoad/vim-pug'
+Plug 'cakebaker/scss-syntax.vim'
 
-"Plug 'posva/vim-vue'
+" JS
+Plug 'elzr/vim-json'
 Plug 'storyn26383/vim-vue'
 Plug 'pangloss/vim-javascript'
 Plug 'othree/html5.vim'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'leafgarland/typescript-vim'
-Plug 'jaawerth/neomake-local-eslint-first'
-"Plug 'othree/yajs.vim', { 'tag': '1.6' }
 "Plug 'othree/es.next.syntax.vim'
-
-"Plug 'othree/yajs.vim', {
-"            \   'for': ['javascript', 'vue']
-"            \ }
-
 
 " Smali
 Plug 'kelwin/vim-smali'
@@ -96,21 +68,189 @@ Plug 'kelwin/vim-smali'
 call plug#end()
 
 
+" Пробую зафиксить ебаную проблему при сохранении
+" E382: Cannot write, 'buftype' option is set
+set buftype=""
+set encoding=utf-8
+let g:syntastic_auto_jump = 0
+inoremap <C-c> <ESC>
 
 " Coc.nvim
-set statusline^=%{coc#status()}
+" TEST
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+let g:coc_node_path = '/Users/avral/.nvm/versions/node/v16.3.0/bin/node'
+
+set hidden
+set nobackup
+set nowritebackup
+set cmdheight=1
+set updatetime=300
+set shortmess+=c
+set signcolumn=yes
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" FIXME Может вот эта херня и была багом
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+
+"Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+"autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap for do codeAction of current line
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Create mappings for function text object, requires document symbols feature of languageserver.
+
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
+
+nmap <silent> <TAB> <Plug>(coc-range-select)
+xmap <silent> <TAB> <Plug>(coc-range-select)
+xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
+
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" use `:OR` for organize import of current buffer
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add status line support, for integration with other plugin, checkout `:h coc-status`
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+
+" Using CocList
+" Show all diagnostics
+nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+
+
+let g:airline#extensions#coc#enabled = 1
+"set statusline^=%{coc#status()}
 let g:airline#extensions#coc#enabled = 1
 nmap <silent> <S-f> <Plug>(coc-definition)
-"nnoremap <S-f> :call CocAction('jumpDefinition', 'tab') <CR>
+
+
+" ALE
+let g:ale_sign_error = '•'
+let g:ale_sign_warning = '•'
+
+hi link ALEErrorSign    Error
+hi link ALEWarningSign  Warning
+
+let g:ale_fix_on_save = 1
+
+"let g:ale_fixers = {
+"\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+"\   'javascript': ['eslint'],
+"\}
+let g:ale_linters = {
+\   'cpp': ['cquery'],
+\}
+
+
+"let g:ale_cpp_cc_executable = '<auto>'
+"let g:ale_cpp_cc_options = '-std=c++17 -Wall'
+"let g:ale_cpp_clang_executable = '/usr/local/opt/blanc/opt/blanc/bin/blanc+++'
+"let g:ale_cpp_clang_options = '-std=c++17 -Wall'
+"let g:ale_cpp_gcc_executable = 'gcc-10'
+"let g:ale_cpp_gcc_options = '-std=c++17 -Wall'
 
 
 
-"autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-"autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-"autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-"autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-"autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
+" NERDTree
+"autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+au StdinReadPre * let s:std_in=1
+"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+"au VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif FIXME
+
+"set fillchars+=vert:\ 
+let NERDTreeAutoDeleteBuffer = 1
+"let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
 
 " configure expanding of tabs for various file types
 au BufRead,BufNewFile *.py set expandtab
@@ -147,113 +287,21 @@ syntax on
 colorscheme OceanicNext
 "colorscheme dracula
 
-" HTML 
+" HTML
 syntax region vueMustache start=/{{/lc=2 end=/}}/me=e-2 contains=@htmlJavaScript contained
 syntax match vueMustacheStart /{{/ nextgroup=vueMustache
 syntax match vueMustacheEnd /}}/
 highlight link vueMustacheStart Delimiter
 highlight link vueMustacheEnd Delimiter
-"let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute " ,"trimming empty <", "unescaped &" , "lacks \"action", "is not recognized!", "discarding unexpected"]
-"let syntastic_mode_map = { 'passive_filetypes': ['html'] }
-"au BufNewFile,BufRead *.html set b:syntastic_skip_checks = 1
-
-
-" Autocomplete
-let g:neosnippet#enable_snipmate_compatibility = 1
 
 " Python
 syn keyword pythonStatement self
 
-"let g:python3_host_prog = '/usr/local/bin/python3'
-let g:deoplete#sources#jedi#server_timeout=30
-"let g:deoplete#sources#jedi#python_path = 'python3'
-let g:deoplete#sources#jedi#enable_cache = 1
-let g:deoplete#enable_at_startup = 1
-
-
-let g:jedi#force_py_version=3
-let g:jedi#auto_vim_configuration = 0
-let g:jedi#goto_assignments_command = 'F'  " dynamically done for ft=python.
-let g:jedi#goto_definitions_command = '<Leader>_K'  " dynamically done for ft=python.
-let g:jedi#use_tabs_not_buffers = 0  " current default is 1.
-let g:jedi#rename_command = '<Leader>gR'
-let g:jedi#usages_command = '<Leader>gu'
-let g:jedi#completions_enabled = 1
-let g:jedi#smart_auto_mappings = 1
-let g:jedi#use_tabs_not_buffers = 1
-
-" Unite/ref and pydoc are more useful.
-"let g:jedi#documentation_command = '<Leader>_K'
-let g:jedi#auto_close_doc = 1
-
-
-" C++
-" let g:deoplete#sources#clang#libclang_path = '/usr/local/opt/llvm/lib/libclang.dylib'
-" let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/lib/clang'
-" let g:deoplete#sources#clang#clang_header = '/usr/local/bin/eosio-cpp'
-
-"
-let g:deoplete#sources#clang#libclang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
-
-"let g:deoplete#sources#clang#libclang_path = '/usr/local/Cellar/llvm/7.0.1/lib/libclang.dylib'
-"let g:deoplete#sources#clang#clang_header = '/usr/local/Cellar/llvm/7.0.1/lib/clang'
-
-
-let g:neomake_cpp_enabled_makers = ['clang']
-"let g:neomake_cpp_enabled_makers = ['clangtidy']
-"let g:neomake_cpp_clang_args = ['-std=c++14', '-Wextra', '-Wall', '-pedantic', '-ferror-limit=0']
-            ""-I /usr/local/Cellar/eosio.cdt/1.6.2/opt/eosio.cdt/include/boost",
-
-let g:neomake_cpp_clang_args = [
-            \ "-std=c++17",
-            \ "-I/usr/local/Cellar/eosio.cdt/1.6.2/opt/eosio.cdt/include",
-            \ '-O3',
-            \ '-Wextra',
-            \ '-Wall',
-            \ '-Iinclude',
-            \ '-fforce-enable-int128',
-            \ '-ferror-limit=0',
-            \ '-g',
-            \ ]
-
-
-"let g:neomake_cpp_clang_args = ['-std=c++1z', '-Iinclude', '-ferror-limit=0']
-
-"let g:neomake_cpp_clang_args = ['-std=c++14', '-Wextra', '-Wall', '-Wno-unused-parameter', '-g', '-ferror-limit=0']
-"let g:neomake_cpp_clangtidy_args = ['-ferror-limit=0']
-"let g:neomake_cpp_clangcheck_args = ['-ferror-limit=0']
-
-"let g:neomake_c_enabled_maker=["clang"]
-"let g:neomake_c_clang_maker=['-ferror-limit=0']
-
-
-let g:deoplete#sources#clang#flags = ["-x", "c++"]
-
-" Emmet
-
-" Syntax
-" vue
-" let g:vue_disable_pre_processors = 1
+" Vue
 autocmd FileType vue syntax sync fromstart
 
-" ESlint
-"let g:neomake_verbose = 3
-let g:neomake_javascript_enabled_makers = ['eslint']
-"let g:neomake_javascript_eslint_exe = $PWD .'/node_modules/.bin/eslint'
-
-
-"
-"au BufRead,BufNewFile *.vue set ft=html
-"autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css
-"autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.css
-
-"autocmd! BufWritePost * Neomake
 let python_highlight_all = 1
-let g:neomake_python_enabled_makers = ['flake8']
 
-"set noshowmode
-"set noruler
 " Airline
 let g:airline#skip_empty_sections = 1
 let g:airline#extensions#whitespace#enabled = 0
@@ -276,10 +324,6 @@ if !&scrolloff
   set scrolloff=3       " Show next 3 lines while scrolling.
 endif
 
-imap <C-k> <Plug>(neosnippet_expand_or_jump)
-smap <C-k> <Plug>(neosnippet_expand_or_jump)
-xmap <C-k> <Plug>(neosnippet_expand_target)
-
 " For conceal markers.
 if has('conceal')
   set conceallevel=2 concealcursor=niv
@@ -288,29 +332,10 @@ endif
 
 nnoremap <C-p> :FZF<CR>
 map <silent> <F2> :NERDTreeToggle %:p:h<CR>
+"map <silent> <F2> :NvimTreeToggle <CR>
 set clipboard+=unnamedplus
 
-" JS
-" Use deoplete.
-
-"let g:deoplete#sources#ternjs#filter = 0
-"let g:deoplete#sources#ternjs#types = 1
-"let g:deoplete#sources#ternjs#depths = 1
-"let g:deoplete#sources#ternjs#timeout = 1
-"let g:tern_request_timeout = 1
-"let g:tern_show_signature_in_pum = 1  " This do disable full signature type on autocomplete
-"
-""Add extra filetypes
-"let g:tern#filetypes = [
-"                \ 'jsx',
-"                \ 'javascript.jsx',
-"                \ 'vue',
-"                \ ]
-
 set completeopt=longest,menuone,preview
-
-"Add extra filetypes
-"let g:syntastic_html_checkers = ['tidy']
 
 set shiftwidth=4
 set tabstop=4
@@ -319,21 +344,12 @@ autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
 autocmd Filetype vue setlocal ts=2 sts=2 sw=2
 autocmd Filetype yaml setlocal ts=2 sts=2 sw=2
+autocmd Filetype scss setlocal ts=2 sts=2 sw=2
+autocmd Filetype css setlocal ts=2 sts=2 sw=2
 
 autocmd Filetype cpp setlocal ts=3 sts=3 sw=3
 autocmd Filetype hpp setlocal ts=3 sts=3 sw=3
 
-
-" Табы
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-
-autocmd FileType javascript let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
-let g:UltiSnipsExpandTrigger="<C-j>"
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 nnoremap <C-Left> :tabprevious<CR>
 nnoremap <C-Right> :tabnext<CR>
@@ -346,21 +362,14 @@ let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycach
 set completeopt-=preview
 
 " Поиск по тексту
-"let g:ackprg = 'ag —vimgrep'
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 
 nnoremap <F3> :set hlsearch!<CR>
-":ino <C-C> <Esc> TODO Remove legasy, so i change Caps Lock to Esc
 
 
-"let g:vue_disable_pre_processors=1
-"autocmd FileType vue syntax sync fromstart
-"autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css.less.pug
-"autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css
-"au BufNewFile,BufRead *.vue setf vue
-"let g:used_javascript_libs = 'vue,react'
-
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
+"Keep cursor when open file again
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+highlight VertSplit ctermbg=NONE
+highlight VertSplit ctermfg=240
