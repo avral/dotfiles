@@ -1,0 +1,18 @@
+{
+  "python.jediEnabled": false,
+  "python.autoComplete.extraPaths": [ "./", "./src", "../*" ],
+
+  "eslint.filetypes": ["javascript", "typescript", "typescriptreact", "javascriptreact", "typescript.tsx"],
+  "eslint.trace.server": "verbose",
+
+  "tslint.jsEnable": true,
+  "javascript.validate.enable": false,
+  "tslint.autoFixOnSave": true,
+  "vetur.useWorkspaceDependencies": true,
+  "coc.preferences.jumpCommand": "tab drop",
+  "prettier.singleQuote": true,
+
+  "tailwindCSS.lint": "warning",
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.enable": true
+}
