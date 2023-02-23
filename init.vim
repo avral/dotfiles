@@ -5,8 +5,13 @@ Plug 'mhartington/oceanic-next'
 Plug 'dracula/vim'
 Plug 'joshdick/onedark.vim'
 
-" Syntax check
+" Syntax
 Plug 'dense-analysis/ale'
+Plug 'Yggdroot/indentLine'
+
+" Commnets
+"Plug 'numToStr/Comment.nvim'
+Plug 'tpope/vim-commentary'
 
 " Coc.nvim
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -18,7 +23,7 @@ Plug 'tomlion/vim-solidity'
 
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
-Plug 'nvim-tree/nvim-tree.lua'
+"Plug 'nvim-tree/nvim-tree.lua'
 
 Plug 'Xuyuanp/nerdtree-git-plugin'
 "
@@ -54,6 +59,7 @@ Plug 'digitaltoad/vim-pug'
 Plug 'cakebaker/scss-syntax.vim'
 
 " JS
+Plug 'honza/vim-snippets'
 Plug 'elzr/vim-json'
 Plug 'storyn26383/vim-vue'
 Plug 'pangloss/vim-javascript'
@@ -65,15 +71,23 @@ Plug 'leafgarland/typescript-vim'
 " Smali
 Plug 'kelwin/vim-smali'
 
-call plug#end()
 
+
+call plug#end()
 
 " Пробую зафиксить ебаную проблему при сохранении
 " E382: Cannot write, 'buftype' option is set
 set buftype=""
 set encoding=utf-8
 let g:syntastic_auto_jump = 0
-inoremap <C-c> <ESC>
+
+" Попробую
+"inoremap <C-c> <ESC>
+inoremap <C-c> <nop>
+"map <C-c> !notify-send -u critical 'Stop that'<CR>
+"
+"
+"!notify-send -u critical 'Stop that'<CR>
 
 " Coc.nvim
 " TEST
@@ -90,12 +104,6 @@ set cmdheight=1
 set updatetime=300
 set shortmess+=c
 set signcolumn=yes
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " FIXME Может вот эта херня и была багом
 function! s:check_back_space() abort
@@ -139,13 +147,13 @@ endfunction
 " Remap for rename current word
 nmap <leader>rn <Plug>(coc-rename)
 
-" Remap for format selected region
+" Formatting selected code
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!
-  " Setup formatexpr specified filetype(s).
+  " Setup formatexpr specified filetype(s)
   autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
@@ -167,9 +175,9 @@ xmap af <Plug>(coc-funcobj-a)
 omap if <Plug>(coc-funcobj-i)
 omap af <Plug>(coc-funcobj-a)
 
-nmap <silent> <TAB> <Plug>(coc-range-select)
-xmap <silent> <TAB> <Plug>(coc-range-select)
-xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
+"nmap <silent> <TAB> <Plug>(coc-range-select)
+"xmap <silent> <TAB> <Plug>(coc-range-select)
+"xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 
 " Use `:Format` to format current buffer
 command! -nargs=0 Format :call CocAction('format')
@@ -212,6 +220,7 @@ nmap <silent> <S-f> <Plug>(coc-definition)
 " ALE
 let g:ale_sign_error = '•'
 let g:ale_sign_warning = '•'
+let g:ale_virtualtext_cursor = 0
 
 hi link ALEErrorSign    Error
 hi link ALEWarningSign  Warning
@@ -340,7 +349,10 @@ set completeopt=longest,menuone,preview
 set shiftwidth=4
 set tabstop=4
 set expandtab
+
 autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
+autocmd Filetype typescript setlocal ts=2 sts=2 sw=2
+autocmd Filetype tsx setlocal ts=2 sts=2 sw=2
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
 autocmd Filetype vue setlocal ts=2 sts=2 sw=2
 autocmd Filetype yaml setlocal ts=2 sts=2 sw=2
@@ -362,14 +374,56 @@ let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycach
 set completeopt-=preview
 
 " Поиск по тексту
+
+nnoremap <C-h> :Ag<CR>
+nnoremap <C-m> :Marks<CR>
+
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 
 nnoremap <F3> :set hlsearch!<CR>
-
 
 "Keep cursor when open file again
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 highlight VertSplit ctermbg=NONE
 highlight VertSplit ctermfg=240
+
+
+" TAB AUTOCOMPLETE
+
+inoremap <silent><expr> <C-j>
+      \ coc#pum#visible() ? coc#pum#next(1):
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><C-k> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+"inoremap <silent><expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+
+" Use tab for trigger completion with characters ahead and navigate
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config
+" otuer plugin b
+
+"inoremap <silent><expr> <TAB>
+"      \ coc#pum#visible() ? coc#pum#confirm():
+"      \ "\<C-y>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+
+"lua << EOF
+"require('Comment').setup()
+"EOF
