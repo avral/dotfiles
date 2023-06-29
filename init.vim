@@ -4,6 +4,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'mhartington/oceanic-next'
 Plug 'dracula/vim'
 Plug 'joshdick/onedark.vim'
+Plug 'Mofiqul/dracula.nvim'
 
 " Syntax
 Plug 'dense-analysis/ale'
@@ -95,7 +96,7 @@ command! -nargs=0 Prettier :CocCommand prettier.formatFile
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
-let g:coc_node_path = '/Users/avral/.nvm/versions/node/v16.3.0/bin/node'
+let g:coc_node_path = '/Users/avral/.nvm/versions/node/v16.20.1/bin/node'
 
 set hidden
 set nobackup
@@ -291,12 +292,19 @@ set guicursor=
 " Theme
 set background=dark
 
+"set termguicolors
 syntax on
 "colorscheme onedark
 colorscheme OceanicNext
 "colorscheme dracula
+"colorscheme dracula
 
-" HTML
+hi Normal guibg=NONE ctermbg=NONE
+hi LineNr guibg=NONE ctermbg=NONE
+hi SignColumn guibg=NONE ctermbg=NONE
+hi EndOfBuffer guibg=NONE ctermbg=NONE
+
+"HTML
 syntax region vueMustache start=/{{/lc=2 end=/}}/me=e-2 contains=@htmlJavaScript contained
 syntax match vueMustacheStart /{{/ nextgroup=vueMustache
 syntax match vueMustacheEnd /}}/
